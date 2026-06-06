@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 45 Practice Quiz 2</title>
+
+    <style>
+        /* --- CSS Variables & Themes --- */
+        :root {
+            --transition-speed: 0.3s;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            
+            /* Default Feedback Colors (Fallback for custom themes) */
+            --feedback-success-bg: #064e3b;
+            --feedback-success-border: #059669;
+            --feedback-success-text: #a7f3d0;
+            --feedback-error-bg: #7f1d1d;
+            --feedback-error-border: #dc2626;
+            --feedback-error-text: #fecaca;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #1e293b; --bg-card: #334155; --bg-header: #0f172a;
+            --text-main: #f1f5f9; --text-muted: #94a3b8; --text-accent: #38bdf8;
+            --border-color: #475569; --highlight-bg: #475569;
+            --button-bg: #38bdf8; --button-text: #0f172a; --button-hover: #0ea5e9;
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f3f4f6; --bg-card: #ffffff; --bg-header: #ffffff;
+            --text-main: #1f2937; --text-muted: #6b7280; --text-accent: #2563eb;
+            --border-color: #e5e7eb; --highlight-bg: #f3f4f6;
+            --button-bg: #2563eb; --button-text: #ffffff; --button-hover: #1d4ed8;
+            --feedback-success-bg: #ecfdf5; --feedback-success-border: #34d399; --feedback-success-text: #065f46;
+            --feedback-error-bg: #fef2f2; --feedback-error-border: #f87171; --feedback-error-text: #991b1b;
+        }
+
+        [data-theme="midnight"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #e0e0e0; --text-muted: #888888; --text-accent: #90caf9;
+            --border-color: #333333; --highlight-bg: #1a1a1a;
+            --button-bg: #90caf9; --button-text: #000000; --button-hover: #42a5f5;
+            --feedback-success-bg: #051b11; --feedback-success-border: #0f5132; --feedback-success-text: #75b798;
+            --feedback-error-bg: #2c0b0e; --feedback-error-border: #842029; --feedback-error-text: #ea868f;
+        }
+
+        [data-theme="legacy-dark"] {
+            --bg-body: #2d343e; --bg-card: #3c424f; --bg-header: #3c424f;
+            --text-main: #e8e6e3; --text-muted: #b0c4de; --text-accent: #8ab4f8;
+            --border-color: #555; --highlight-bg: #454c5a;
+            --button-bg: #8ab4f8; --button-text: #202124; --button-hover: #a3c5f9;
+            --feedback-success-bg: #344e41; --feedback-success-border: #52b788; --feedback-success-text: #c7f9cc;
+            --feedback-error-bg: #5e2129; --feedback-error-border: #a4133c; --feedback-error-text: #f8d7da;
+        }
+
+        [data-theme="sepia"] {
+            --bg-body: #f4ecd8; --bg-card: #fdf6e3; --bg-header: #e4d5b7;
+            --text-main: #433422; --text-muted: #7c6f5a; --text-accent: #a05a2c;
+            --border-color: #d3c4a5; --highlight-bg: #ebe1c9;
+            --button-bg: #a05a2c; --button-text: #fdf6e3; --button-hover: #864822;
+            --feedback-success-bg: #e6f4ea; --feedback-success-border: #8ab893; --feedback-success-text: #2e4c35;
+            --feedback-error-bg: #f9e3e3; --feedback-error-border: #d48f8f; --feedback-error-text: #5c2b2b;
+        }
+
+        [data-theme="contrast"] {
+            --bg-body: #000000; --bg-card: #000000; --bg-header: #000000;
+            --text-main: #ffffff; --text-muted: #dddddd; --text-accent: #ffff00;
+            --border-color: #ffffff; --highlight-bg: #333333;
+            --button-bg: #ffff00; --button-text: #000000; --button-hover: #e6e600;
+            --feedback-success-bg: #000000; --feedback-success-border: #00ff00; --feedback-success-text: #00ff00;
+            --feedback-error-bg: #000000; --feedback-error-border: #ff0000; --feedback-error-text: #ff0000;
+        }
+
+        /* --- Global Reset & Layout --- */
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            margin: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        header.unpinned { position: relative; box-shadow: none; }
+
+        .header-top {
+            display: flex; justify-content: space-between; align-items: center;
+            width: 100%; flex-wrap: wrap; gap: 15px;
+        }
+
+        header h1 { font-size: 1.5rem; margin: 0; color: var(--text-accent); font-weight: 700; }
+
+        .controls-wrapper { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+        /* --- Custom Theme Builder --- */
+        .custom-builder {
+            display: none; flex-wrap: wrap; gap: 15px;
+            background-color: var(--bg-card); padding: 10px 15px;
+            border-radius: 8px; border: 1px solid var(--border-color);
+            margin-top: 5px; font-size: 0.85rem; animation: fadeIn 0.3s;
+            width: 100%; justify-content: flex-end;
+        }
+        .custom-builder.active { display: flex; }
+        .color-picker-group { display: flex; align-items: center; gap: 8px; }
+        .color-picker-group input[type="color"] {
+            border: none; width: 25px; height: 25px; border-radius: 4px;
+            cursor: pointer; padding: 0; background: none;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Controls --- */
+        .header-btn {
+            background-color: var(--highlight-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .header-btn:hover {
+            border-color: var(--text-accent);
+            color: var(--text-accent);
+        }
+
+        .pin-btn {
+            background: none; border: 1px solid var(--border-color); color: var(--text-main);
+            cursor: pointer; padding: 0 10px; border-radius: 6px; font-size: 1rem;
+            transition: background-color 0.2s; height: 34px; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .pin-btn:hover { background-color: var(--highlight-bg); }
+        .pin-btn.pin-active { background-color: rgba(0, 0, 0, 0.1); }
+
+        select#theme-select {
+            padding: 0 12px; border-radius: 6px; border: 1px solid var(--border-color);
+            background-color: var(--bg-card); color: var(--text-main);
+            cursor: pointer; font-family: inherit; height: 34px;
+        }
+
+        /* --- Section Navigation --- */
+        .section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+        .section-nav button {
+            background-color: var(--highlight-bg); color: var(--text-main);
+            border: 1px solid var(--border-color); padding: 6px 12px;
+            border-radius: 6px; cursor: pointer; font-size: 0.85rem;
+            font-weight: 500; transition: all 0.2s;
+        }
+        .section-nav button:hover { border-color: var(--text-accent); color: var(--text-accent); }
+
+        /* --- Main Content --- */
+        .container {
+            max-width: 850px;
+            margin: 2rem auto;
+            padding: 0 1rem 4rem 1rem;
+        }
+
+        .section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--text-accent);
+            color: var(--text-accent);
+            font-size: 1.5rem;
+            font-weight: 700;
+            scroll-margin-top: 150px; /* Offset for sticky header */
+        }
+
+        /* --- Question Card --- */
+        .question-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .lo-box {
+            background-color: var(--highlight-bg);
+            border-left: 4px solid var(--text-accent);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none; /* Hidden by default */
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Options --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: flex-start;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: var(--highlight-bg);
+            border-color: var(--text-muted);
+        }
+
+        .option-label input {
+            margin-top: 0.3rem;
+            margin-right: 1rem;
+            accent-color: var(--text-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Buttons --- */
+        .btn-check {
+            margin-top: 1.5rem;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-check:hover {
+            opacity: 0.9;
+        }
+
+        .btn-link {
+            display: inline-block;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+            font-size: 1rem;
+        }
+
+        .btn-link:hover {
+            opacity: 0.9;
+        }
+
+        /* --- Feedback Area --- */
+        .feedback {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none; /* Hidden by default */
+            border: 1px solid transparent;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-success-bg);
+            border-color: var(--feedback-success-border);
+            color: var(--feedback-success-text);
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-error-bg);
+            border-color: var(--feedback-error-border);
+            color: var(--feedback-error-text);
+        }
+
+        .feedback-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rationale {
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .source {
+            display: block;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            font-style: italic;
+            border-top: 1px dashed currentColor;
+            padding-top: 0.5rem;
+        }
+
+        /* --- Mobile Tweaks --- */
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; align-items: flex-start; }
+            .controls-wrapper { width: 100%; justify-content: flex-start; }
+            .section-nav { justify-content: flex-start; }
+            .custom-builder { justify-content: flex-start; }
+            header h1 { font-size: 1.25rem; }
+            #reveal-all-container { justify-content: flex-start !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <div class="header-top">
+            <h1>Week 45 Practice Quiz 2</h1>
+            <div class="controls-wrapper">
+                
+                <!-- Reveal LOs Button -->
+                <button id="reveal-all-btn" class="header-btn" onclick="toggleAllLOs()">Show Learning Objectives</button>
+                
+                <!-- Pin Button -->
+                <button class="pin-btn pin-active" id="pin-btn" onclick="toggleHeader()" title="Pin/Unpin Header">📌</button>
+                
+                <!-- Theme Selector -->
+                <div class="theme-control">
+                    <select id="theme-select" onchange="changeTheme(this.value)">
+                        <option value="dark">Modern Dark</option>
+                        <option value="midnight">Midnight</option>
+                        <option value="light">Modern Light</option>
+                        <option value="legacy-dark">Legacy Dark</option>
+                        <option value="sepia">Sepia</option>
+                        <option value="contrast">High Contrast</option>
+                        <option value="custom">⚙️ Custom...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Custom Theme Color Pickers -->
+            <div class="custom-builder" id="custom-builder">
+                <div class="color-picker-group">
+                    <label>Background:</label>
+                    <input type="color" id="color-bg" value="#1a1a2e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Cards:</label>
+                    <input type="color" id="color-card" value="#16213e" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Text:</label>
+                    <input type="color" id="color-text" value="#e94560" oninput="updateCustomTheme()">
+                </div>
+                <div class="color-picker-group">
+                    <label>Accent:</label>
+                    <input type="color" id="color-accent" value="#0f3460" oninput="updateCustomTheme()">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dynamic Navigation Bar -->
+        <div class="section-nav" id="section-nav"></div>
+    </header>
+
+    <div class="container">
+        <div id="quiz-root">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- Data ---
+        const quizData = [
+            // --- Section 1: Diabetes-Induced Dysregulation of Lipid Metabolism ---
+            {
+                section: "Diabetes-Induced Dysregulation of Lipid Metabolism",
+                fullLO: "LO1: Understand insulin regulation of metabolism.",
+                question: "A 45-year-old healthy man eats a carbohydrate-rich meal, triggering a spike in endogenous insulin secretion. At the cellular level, insulin binds to its receptor and triggers a signaling cascade involving Akt. This cascade leads to the phosphorylation and subsequent inhibition of the FOXO1 transcription factor in the liver. Which of the following metabolic processes is directly suppressed as a result of FOXO1 inhibition?",
+                options: {
+                    A: "Glycogen synthesis",
+                    B: "Gluconeogenesis",
+                    C: "Glycolysis",
+                    D: "Lipogenesis",
+                    E: "Proteolysis"
+                },
+                correctAnswer: "B",
+                rationale: "In the liver, insulin signaling via Akt phosphorylates and inhibits the FOXO1 transcription factor. FOXO1 normally promotes the expression of gluconeogenic genes (like G6Pase and PEPCK). By inhibiting FOXO1, insulin shuts down gluconeogenesis.",
+                source: "Diabetes-Induced Dysregulation of Lipid Metabolism PDF, slide 10: 'Regulation of glucose metabolism by insulin... Akt [inhibits] FOXO1 [inhibits] Gluconeogenesis genes (G6Pase, PEPCK, etc) [decreases] Gluconeogenesis'"
+            },
+            {
+                section: "Diabetes-Induced Dysregulation of Lipid Metabolism",
+                fullLO: "LO1: Understand insulin regulation of metabolism.",
+                question: "A 22-year-old woman with type 1 diabetes administers her prandial dose of insulin. As insulin acts on her adipose tissue, it promotes lipogenesis and strictly inhibits lipolysis. The inhibition of lipolysis in her adipocytes is mediated by the insulin-stimulated activation of which of the following specific intracellular enzymes?",
+                options: {
+                    A: "Hormone-sensitive lipase (HSL)",
+                    B: "Phosphodiesterase 3B (PDE3B)",
+                    C: "Protein kinase A (PKA)",
+                    D: "Sterol regulatory element-binding protein 1c (SREBP1c)",
+                    E: "cAMP-dependent protein kinase"
+                },
+                correctAnswer: "B",
+                rationale: "In adipocytes, insulin signaling activates Akt, which subsequently activates PDE3B. PDE3B degrades cAMP, leading to the inhibition of Protein Kinase A (PKA) and the subsequent inhibition of Hormone-sensitive lipase (HSL), thereby halting lipolysis.",
+                source: "Diabetes-Induced Dysregulation of Lipid Metabolism PDF, slide 18: 'Regulation of lipid metabolism by insulin... Akt [activates] PDE3B [inhibits] PKA [decreases]... HSL [decreases]... [decreases] Lipolysis'"
+            },
+            {
+                section: "Diabetes-Induced Dysregulation of Lipid Metabolism",
+                fullLO: "LO2: Understand the relationship between leptin, obesity and insulin resistance to the development of diabetic complications.",
+                question: "A medical researcher is studying the endocrine function of adipose tissue in obese patients. She notes that as body fat mass increases, adipocytes secrete proportionally larger amounts of a 16-kDa protein hormone designed to regulate food intake. Upon reaching the hypothalamus, this hormone normally binds to the LepRb receptor. This binding primarily regulates gene expression via which of the following intracellular signaling pathways?",
+                options: {
+                    A: "cAMP/Protein Kinase A",
+                    B: "JAK-STAT",
+                    C: "MAP kinase",
+                    D: "PI3K/Akt",
+                    E: "Wnt/beta-catenin"
+                },
+                correctAnswer: "B",
+                rationale: "Leptin is secreted by adipocytes and acts on the hypothalamus. It binds to its receptor (LepRb) and activates the JAK-STAT pathway to regulate the expression of genes involved in food intake and energy expenditure.",
+                source: "Diabetes-Induced Dysregulation of Lipid Metabolism PDF, slide 28: 'Leptin signaling and functions... Leptin binds to its receptor LepRb and activates JAK-STAT pathway to regulate gene expression'"
+            },
+            {
+                section: "Diabetes-Induced Dysregulation of Lipid Metabolism",
+                fullLO: "LO2: Understand the relationship between leptin, obesity and insulin resistance to the development of diabetic complications.",
+                question: "A 55-year-old obese man is diagnosed with type 2 diabetes mellitus. His physician explains that his excess adipose tissue is actively driving his disease through \"lipotoxicity.\" In this pathophysiological mechanism, which of the following specific lipid metabolites is primarily responsible for preventing insulin from working properly in his muscle and fat cells?",
+                options: {
+                    A: "Bile acids",
+                    B: "Chylomicron remnants",
+                    C: "Free fatty acids (FFAs)",
+                    D: "High-density lipoproteins (HDL)",
+                    E: "Ketone bodies"
+                },
+                correctAnswer: "C",
+                rationale: "In obesity-driven type 2 diabetes, insulin resistance is heavily driven by lipotoxicity. Elevated free fatty acids (FFAs) interfere with insulin signaling, preventing it from working properly in muscle and fat cells. Increased FFA transport to the liver also contributes to hepatic insulin resistance.",
+                source: "Diabetes-Induced Dysregulation of Lipid Metabolism PDF, slide 26: 'Mechanisms Driving T2DM via Dyslipidemia: • Insulin resistance (Lipotoxicity): Elevated free fatty acids (FFAs) prevent insulin from working properly in muscle and fat cells.'"
+            },
+            {
+                section: "Diabetes-Induced Dysregulation of Lipid Metabolism",
+                fullLO: "LO3: Understand how ketone body synthesis is impacted in diabetics and clinical complications of this altered regulation.",
+                question: "A 19-year-old man with undiagnosed type 1 diabetes is brought to the emergency department in a coma. His breath has a fruity odor, and laboratory results reveal profound metabolic acidosis. Because he lacks insulin, massive amounts of fatty acids undergo beta-oxidation to form excess acetyl-CoA. In which of the following cellular locations is this excess acetyl-CoA converted into ketone bodies?",
+                options: {
+                    A: "Adipocyte cytosol",
+                    B: "Liver mitochondria",
+                    C: "Pancreatic beta-cell cytosol",
+                    D: "Skeletal muscle mitochondria",
+                    E: "Renal tubular cell cytoplasm"
+                },
+                correctAnswer: "B",
+                rationale: "Ketogenesis occurs primarily when fatty acids are broken down into acetyl-CoA, which is then converted into ketone bodies specifically within the mitochondria of liver cells.",
+                source: "Diabetes-Induced Dysregulation of Lipid Metabolism PDF, slide 34: 'Ketogenesis: ... Fatty acids are broken down into acetyl-CoA through beta-oxidation, and then Acetyl-CoA is converted into ketone bodies in liver mitochondria.'"
+            },
+            {
+                section: "Diabetes-Induced Dysregulation of Lipid Metabolism",
+                fullLO: "LO3: Understand how ketone body synthesis is impacted in diabetics and clinical complications of this altered regulation.",
+                question: "A 70-year-old obese man with type 2 diabetes develops severe dehydration and a blood glucose level of 800 mg/dL. Despite his profound hyperglycemia, his serum tests completely negative for ketones. Which of the following physiological principles best explains the absence of ketosis in this patient's Hyperosmolar Hyperglycemic State (HHS)?",
+                options: {
+                    A: "Adipose tissue is highly sensitive to insulin, requiring very little to inhibit lipolysis.",
+                    B: "Hepatic gluconeogenesis effectively consumes all available free fatty acids.",
+                    C: "His kidneys rapidly excrete all synthesized ketones into the urine.",
+                    D: "Muscle cells require extremely low amounts of insulin to force glucose out of the blood.",
+                    E: "Pancreatic alpha-cells completely cease the production of glucagon."
+                },
+                correctAnswer: "A",
+                rationale: "The \"Insulin Sensitivity Gap\" explains why HHS patients do not develop ketosis. Adipose tissue is highly sensitive to insulin (the Anti-Lipolytic Threshold is low); it takes only about 10% as much insulin to completely inhibit lipolysis as it does to stimulate glucose uptake. In HHS, the small amount of residual insulin is enough to shut down lipolysis (preventing FFA release and ketogenesis) but not enough to clear glucose.",
+                source: "Diabetes-Induced Dysregulation of Lipid Metabolism PDF, slide 38: 'The Insulin Sensitivity Gap... Anti-Lipolytic Threshold (Low): Adipose (fat) tissue is highly sensitive to insulin. It takes only about 10% as much insulin to completely inhibit lipolysis as it does to stimulate glucose uptake and utilization.'"
+            },
+
+            // --- Section 2: Pathology of Diabetes ---
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO1: Define diabetes mellitus and list the basic diagnostic criteria.",
+                question: "A 50-year-old man visits his primary care physician for a routine physical examination. He has no complaints and reports no polyuria, polydipsia, or weight loss. A comprehensive metabolic panel is drawn after he has fasted for 10 hours. According to the World Health Organization (WHO) and American Diabetes Association (ADA) criteria, which of the following fasting blood glucose levels (in mg/dL) represents the minimum threshold for a definitive diagnosis of diabetes mellitus?",
+                options: {
+                    A: "100",
+                    B: "110",
+                    C: "126",
+                    D: "140",
+                    E: "200"
+                },
+                correctAnswer: "C",
+                rationale: "According to the WHO and ADA criteria, a fasting blood glucose level of 126 mg/dL or greater is diagnostic for diabetes. Levels between 100 and 125 mg/dL indicate Impaired Glucose Tolerance (IGT) or prediabetes.",
+                source: "Pathology of Diabetes PDF, slide 9 & 10: 'Diabetes Mellitus WHO Criteria... Fasting [Graph shows Diabetes starting at] 126'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO1: Define diabetes mellitus and list the basic diagnostic criteria.",
+                question: "A 45-year-old overweight woman is being screened for diabetes mellitus. Her physician orders an Oral Glucose Tolerance Test (OGTT). After consuming the standard glucose load, her blood glucose is measured at the 2-hour mark. Which of the following values (in mg/dL) is the lowest threshold at this 2-hour mark that confirms a diagnosis of diabetes?",
+                options: {
+                    A: "126",
+                    B: "140",
+                    C: "155",
+                    D: "180",
+                    E: "200"
+                },
+                correctAnswer: "E",
+                rationale: "On an Oral Glucose Tolerance Test (OGTT) evaluated at the 2-hour mark, a blood glucose level of 200 mg/dL or greater is diagnostic of diabetes. Levels between 140 and 199 mg/dL represent Impaired Glucose Tolerance (IGT).",
+                source: "Pathology of Diabetes PDF, slide 9 & 10: 'Diabetes Mellitus WHO Criteria... OGTT @ 2 hr [Graph shows Diabetes starting at] 200'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO2: Compare and contrast Type 1 and Type 2 diabetes mellitus in regard to: Pathogenesis, Genetic predisposition and risk factors, Typical clinical presentation, Morphologic features.",
+                question: "A 12-year-old boy presents to the clinic with significant weight loss, excessive thirst, and frequent urination. Laboratory testing confirms the diagnosis of type 1 diabetes mellitus. The fundamental pathogenesis of his condition involves the active destruction of his pancreatic beta-cells. Which of the following cell types are the major culprits directly mediating this cellular destruction?",
+                options: {
+                    A: "B lymphocytes and plasma cells",
+                    B: "CD4+ T cells (TH1 subset) and CD8+ cytotoxic T cells",
+                    C: "Eosinophils and mast cells",
+                    D: "Macrophages and multinucleated giant cells",
+                    E: "Neutrophils and natural killer cells"
+                },
+                correctAnswer: "B",
+                rationale: "Type 1 diabetes is characterized by the autoimmune destruction of beta-cells. The major culprits in this pathogenesis are T lymphocytes, specifically CD4+ T cells of the TH1 subset and CD8+ cytotoxic T cells.",
+                source: "Pathology of Diabetes PDF, slide 23: 'Type 1 Diabetes Mellitus Pathogenesis • Autoimmune destruction of β-cells • T lymphocytes major culprits – CD4+ T cells of the TH1 subset – CD8+ cytotoxic T cells'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO2: Compare and contrast Type 1 and Type 2 diabetes mellitus in regard to: Pathogenesis, Genetic predisposition and risk factors, Typical clinical presentation, Morphologic features.",
+                question: "Researchers are studying the genetic inheritance patterns of diabetes mellitus in families. They identify a cohort of monozygotic (identical) twins. In this cohort, if one twin develops the disease, the other twin has a 50-90% chance of also developing it. Furthermore, genetic sequencing of this cohort reveals that their disease risk is NOT linked to genes involved in immune tolerance (such as HLA). Which of the following diseases does this cohort most likely have?",
+                options: {
+                    A: "Gestational diabetes",
+                    B: "Hashimoto's thyroiditis",
+                    C: "Minimal change disease",
+                    D: "Type 1 diabetes mellitus",
+                    E: "Type 2 diabetes mellitus"
+                },
+                correctAnswer: "E",
+                rationale: "Type 2 diabetes has a very high concordance rate in identical twins (50-90%) compared to Type 1. Additionally, Type 2 diabetes genetic susceptibility is complex, polygenic, and not linked to MHC Class II (HLA) immune tolerance genes, whereas Type 1 is heavily linked to HLA-DR3 and HLA-DR4.",
+                source: "Pathology of Diabetes PDF, slide 30: 'Type 2 Diabetes Mellitus Pathogenesis • Genetic Factors – High concordance rate • Indentical twins: 50-90% ... – Not linked to genes involved in immune tolerance and regulation (in contrast to Type 1)'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO2: Compare and contrast Type 1 and Type 2 diabetes mellitus in regard to: Pathogenesis, Genetic predisposition and risk factors, Typical clinical presentation, Morphologic features.",
+                question: "A 14-year-old girl is brought to the emergency department in a stupor. Her parents report she has been extremely thirsty and tired for three days. Her blood glucose is 290 mg/dL, and her serum is positive for ketones. She is diagnosed with diabetic ketoacidosis (DKA). Based on typical clinical presentations, this severe ketotic state is a hallmark of which of the following underlying conditions?",
+                options: {
+                    A: "Complete resistance to peripheral insulin action",
+                    B: "Gestational diabetes",
+                    C: "Increased levels of adiponectin",
+                    D: "Type 1 diabetes mellitus",
+                    E: "Type 2 diabetes mellitus"
+                },
+                correctAnswer: "D",
+                rationale: "Ketoacidosis is a common clinical presentation in Type 1 diabetes mellitus (which typically has an onset < 20 years and normal BMI). In contrast, Type 2 diabetes commonly presents with a nonketotic hyperosmolar state.",
+                source: "Pathology of Diabetes PDF, slide 38: 'Type 1 vs. Type 2 ... [Type 1:] Onset < 20 years ... Ketoacidosis common ... [Type 2:] Onset usually > 30 years ... Nonketotic hyperosmolar'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO2: Compare and contrast Type 1 and Type 2 diabetes mellitus in regard to: Pathogenesis, Genetic predisposition and risk factors, Typical clinical presentation, Morphologic features.",
+                question: "A 65-year-old obese man with a 15-year history of diabetes mellitus dies of a massive myocardial infarction. During the autopsy, sections of his pancreas are stained and examined under light microscopy. The islets of Langerhans show gradual replacement of islet cells by an extracellular, amorphous substance. Which of the following is the specific composition of this deposited material?",
+                options: {
+                    A: "CD4+ T lymphocytes",
+                    B: "Collagen type IV",
+                    C: "Glycosylated hemoglobin",
+                    D: "Islet amyloid pancreatic polypeptide (IAPP)",
+                    E: "Lipofuscin pigment"
+                },
+                correctAnswer: "D",
+                rationale: "A classic morphologic feature of long-standing Type 2 diabetes is the deposition of amyloid in the pancreatic islets. This amyloid is composed of Islet amyloid pancreatic polypeptide (IAPP, also known as amylin), which is normally co-secreted with insulin by beta cells.",
+                source: "Pathology of Diabetes PDF, slides 43 & 45: 'Amyloidosis of Islets • Gradual replacement of islet cells by amyloid • Most commonly seen in long-standing type 2 diabetes' AND 'Amyoidosis of Islets • IAPP – Islet amyloid pancreatic polypeptide – The major constituent of islet amyloid – Also known as amylin'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO3: Define gestation diabetes and describe potential adverse effects.",
+                question: "A 28-year-old pregnant woman is diagnosed with gestational diabetes at 26 weeks of gestation. Her physician explains that her condition is primarily driven by increased insulin resistance. This resistance is a normal physiological adaptation taken to an extreme, caused by the secretion of diabetogenic hormones from which of the following structures?",
+                options: {
+                    A: "Fetal adrenal cortex",
+                    B: "Maternal anterior pituitary",
+                    C: "Maternal hypothalamus",
+                    D: "Placenta",
+                    E: "Yolk sac"
+                },
+                correctAnswer: "D",
+                rationale: "Gestational diabetes is usually due to increased insulin resistance caused by the placenta secreting diabetogenic hormones (such as GH, CRH, hCS, and progesterone). If the mother's compensatory insulin secretion is inadequate, gestational diabetes develops.",
+                source: "Pathology of Diabetes PDF, slide 40: 'Gestational Diabetes • Usually due to ↑ insulin resistance – Placenta secretes diabetogenic hormones (normal) • GH, CRH, hCS, progesterone'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO3: Define gestation diabetes and describe potential adverse effects.",
+                question: "A woman whose pregnancy was complicated by poorly controlled gestational diabetes delivers a full-term infant. Due to the mother's hyperinsulinemic and hyperglycemic state during gestation, the pediatrician closely monitors the newborn for specific expected complications. Which of the following combinations of adverse effects is most likely to affect this baby?",
+                options: {
+                    A: "Macrosomia and hypoglycemia",
+                    B: "Macrosomia and severe hyperglycemia",
+                    C: "Microcephaly and hypercalcemia",
+                    D: "Oligohydramnios and Potter sequence",
+                    E: "Renal agenesis and hyperkalemia"
+                },
+                correctAnswer: "A",
+                rationale: "Gestational diabetes poses specific problems for the baby, most notably macrosomia (Large for Gestational Age - LGA) and postpartum hypoglycemia (because the baby's pancreas was overproducing insulin in utero to handle the mother's high blood sugar, leading to a crash when the umbilical cord is cut).",
+                source: "Pathology of Diabetes PDF, slide 39: 'Gestational Diabetes ... • Problems for baby – Macrosomia / LGA – Hypoglycemia'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO4: Identify three pathogenic mechanisms for the complications of diabetes.",
+                question: "A 60-year-old diabetic woman presents with worsening visual acuity. Fundoscopic examination reveals neovascularization and focal hemorrhages. The pathogenic mechanisms causing these microvascular complications are complex, but fundamentally involve the adverse effects of chronic hyperglycemia on small blood vessels. Which of the following pathological processes occurs directly in the capillary walls to cause these diabetic microvascular complications?",
+                options: {
+                    A: "Acute purulent inflammation of the vessel wall",
+                    B: "Autoimmune destruction of the endothelial cells by CD8+ T cells",
+                    C: "Capillary basement membrane thickening",
+                    D: "Deposition of islet amyloid pancreatic polypeptide (IAPP)",
+                    E: "Malignant proliferation of smooth muscle cells"
+                },
+                correctAnswer: "C",
+                rationale: "A hallmark pathogenic mechanism of diabetic microvascular complications (like diabetic nephropathy and retinopathy) is the thickening of the capillary basement membrane.",
+                source: "Pathology of Diabetes PDF, slide 47: 'Diabetic Nephropathy • Glomerular – Capillary BM thickening – Diffuse mesangial sclerosis – Nodular sclerosis'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO4: Identify three pathogenic mechanisms for the complications of diabetes.",
+                question: "A 55-year-old man with a long history of poorly controlled type 2 diabetes presents with a gangrenous ulcer on his left foot. The physician explains that the patient has severe macrovascular disease. Which of the following is the primary pathogenic mechanism responsible for his macrovascular diabetic complications, including his risk for myocardial infarction and lower extremity gangrene?",
+                options: {
+                    A: "Accelerated atherosclerosis",
+                    B: "Autoimmune vasculitis",
+                    C: "Excessive glucagon secretion",
+                    D: "Massive dilation of major arteries",
+                    E: "Segmental demyelination of vascular nerves"
+                },
+                correctAnswer: "A",
+                rationale: "The macrovascular complications of diabetes (which include ischemic heart disease, myocardial infarction, and lower extremity gangrene) are driven primarily by accelerated atherosclerosis.",
+                source: "Pathology of Diabetes PDF, slide 46: 'Diabetes Mellitus Macrovascular | Accelerated atherosclerosis • Ischemic heart disease – Most common cause of death among diabetics – Myocardial infarction... • Gangrene of lower extremities'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO5: Describe the utility of hemoglobin A1c.",
+                question: "A 45-year-old man with type 2 diabetes has his blood drawn for a Hemoglobin A1c test. His result is 8.5%. The physician uses this value to assess his glycemic control. This test is a highly reliable index of his mean blood glucose because the glucose binds to hemoglobin via which of the following mechanisms?",
+                options: {
+                    A: "A reversible ionic bond that fluctuates daily",
+                    B: "Active transport by a specific RBC membrane pump",
+                    C: "An irreversible reaction forming a stable glycosylated complex",
+                    D: "Enzymatic cleavage by red blood cell proteases",
+                    E: "Phagocytosis by circulating macrophages"
+                },
+                correctAnswer: "C",
+                rationale: "Hemoglobin A1c serves as an index of mean blood glucose because glucose binds irreversibly to hemoglobin to form a stable glycosylated hemoglobin complex. This complex is only eliminated when the RBC is replaced.",
+                source: "Pathology of Diabetes PDF, slide 11: 'Hemoglobin A1c • Index of mean blood glucose • Glucose binds irreversibly to form a stable glycosylated hemoglobin complex – A1c only eliminated when RBCs replaced'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO5: Describe the utility of hemoglobin A1c.",
+                question: "A patient with diabetes is instructed to monitor his daily blood glucose levels using a finger-stick glucometer, but his physician also orders a Hemoglobin A1c test every 3 months. The physician explains that the A1c test is not subject to daily fluctuations and reflects his blood glucose concentration precisely over the lifespan of a normal red blood cell. What is the approximate lifespan of the normal red blood cells utilized in this test?",
+                options: {
+                    A: "14-21 days",
+                    B: "30-45 days",
+                    C: "60-70 days",
+                    D: "90-120 days",
+                    E: "180-200 days"
+                },
+                correctAnswer: "D",
+                rationale: "The HbA1c test reflects mean blood glucose over the lifespan of a red blood cell, which is normally 90-120 days.",
+                source: "Pathology of Diabetes PDF, slide 11: 'Hemoglobin A1c... A1c only eliminated when RBCs replaced • Normal RBC lifespan 90-120 days'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO6: Describe morphologic changes commonly associated with diabetes mellitus, and correlate them with clinical features.",
+                question: "A 65-year-old man with a 20-year history of diabetes presents with a loss of protective sensation in his feet, resulting in repeated minor traumas that he cannot feel. He is diagnosed with diabetic neuropathy. A nerve biopsy is performed. Which of the following morphologic changes is most characteristic of the peripheral nerves in this condition?",
+                options: {
+                    A: "Accumulation of amyloid plaques in the epineurium",
+                    B: "Massive infiltration of CD4+ T lymphocytes",
+                    C: "Nodular sclerosis of the perineurium",
+                    D: "Predominantly axonal loss and segmental demyelination",
+                    E: "Proliferation of Schwann cells forming micro-neuromas"
+                },
+                correctAnswer: "D",
+                rationale: "Diabetic neuropathy is morphologically characterized by predominantly axonal neuropathy, segmental demyelination, loss of fibers (predominantly small fibers), and arteriolar thickening. This correlates clinically with symmetric distal sensory loss.",
+                source: "Pathology of Diabetes PDF, slide 52: 'Diabetes Mellitus Neuropathy • Predominantly axonal • Segmental demyelination • Loss of fibers – Predominantly small fibers'"
+            },
+            {
+                section: "Pathology of Diabetes",
+                fullLO: "LO6: Describe morphologic changes commonly associated with diabetes mellitus, and correlate them with clinical features.",
+                question: "A patient with long-standing type 2 diabetes develops overt proteinuria and slowly progresses to chronic renal failure. A renal biopsy is obtained to evaluate the extent of diabetic nephropathy. Which of the following morphologic changes in the glomerulus is a hallmark finding in diabetic nephropathy?",
+                options: {
+                    A: "Crescent formation in Bowman's space",
+                    B: "Linear deposition of IgG along the basement membrane",
+                    C: "Nodular sclerosis (Kimmelstiel-Wilson nodules)",
+                    D: "Subepithelial humps on electron microscopy",
+                    E: "Tram-track splitting of the basement membrane"
+                },
+                correctAnswer: "C",
+                rationale: "The morphologic changes in diabetic nephropathy affecting the glomerulus specifically include capillary basement membrane thickening, diffuse mesangial sclerosis, and nodular sclerosis.",
+                source: "Pathology of Diabetes PDF, slide 47: 'Diabetes Mellitus Diabetic Nephropathy • Glomerular – Capillary BM thickening – Diffuse mesangial sclerosis – Nodular sclerosis'"
+            },
+
+            // --- Section 3: Infections in the Diabetic Patient ---
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO1: Formulate a differential diagnosis for superficial skin infections in diabetics.",
+                question: "A 55-year-old, morbidly obese diabetic man presents with a large, irregularly shaped, reddish-brown patch in his right axilla. The rash is asymptomatic. During the physical examination, the physician shines an ultraviolet (Wood's) lamp on the lesion, which brightly fluoresces coral-red. This fluorescence is caused by coproporphyrin III produced by which of the following organisms?",
+                options: {
+                    A: "Candida albicans",
+                    B: "Corynebacterium minutissimum",
+                    C: "Epidermophyton floccosum",
+                    D: "Staphylococcus aureus",
+                    E: "Trichophyton rubrum"
+                },
+                correctAnswer: "B",
+                rationale: "Erythrasma presents as asymptomatic or mildly pruritic reddish-brown patches in moist areas like the axilla. It is caused by the Gram-positive bacillus Corynebacterium minutissimum, which produces coproporphyrin III that fluoresces under UV light.",
+                source: "Infections in Diabetics Handout PDF, pages 1-2: 'Erythrasma: 1. caused by Corynebacterium minutissimum, a Gram-positive bacillus... d. organism produces coproporphyrin III which fluoresces with UV light'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO1: Formulate a differential diagnosis for superficial skin infections in diabetics.",
+                question: "A 60-year-old diabetic woman presents with an erythematous rash under her breasts. The physician notes generalized erythema with distinct, smaller red papules located just outside the main border of the rash. These \"satellite lesions\" strongly suggest which of the following superficial infections?",
+                options: {
+                    A: "Bullous impetigo",
+                    B: "Cutaneous candidiasis",
+                    C: "Erythrasma",
+                    D: "Rhinocerebral mucormycosis",
+                    E: "Tinea corporis"
+                },
+                correctAnswer: "B",
+                rationale: "Cutaneous candidiasis can resemble erythrasma, but the presence of \"satellite lesions\" (smaller patches/papules adjacent to the main plaque) is a hallmark that almost invariably distinguishes it from erythrasma.",
+                source: "Infections in Diabetics Handout PDF, page 2: 'Cutaneous candidiasis 1. can resemble erythrasma with erythematous plaques... 2. satellite lesions (ie smaller patches, papules, etc) almost invariably present'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO2: List the common causes of pneumonia in diabetics.",
+                question: "A 65-year-old man with poorly controlled diabetes (blood glucose 250 mg/dL) develops a severe bacterial infection. His physician explains that his chronic hyperglycemia directly impairs his innate immune system's ability to fight off bacteria. Which of the following specific cellular functions of his neutrophils is significantly impaired by his hyperglycemia?",
+                options: {
+                    A: "Apoptosis of virally infected host cells",
+                    B: "Chemotaxis, rolling, adhesion, and phagocytosis",
+                    C: "Maturation in the thymus gland",
+                    D: "Production of antibodies",
+                    E: "Secretion of insulin-like growth factor"
+                },
+                correctAnswer: "B",
+                rationale: "In diabetics with blood glucose ≥ 216 mg/dL, there are profound defects in innate immunity. Specifically, white blood cell (neutrophil/macrophage) chemotaxis, rolling, adhesion, phagocytosis, and intracellular killing are impaired.",
+                source: "Infections in Diabetics Handout PDF, page 1: 'Risk Factors: Blood glucose ≥ 216mg/dL 1. WBC chemotaxis, rolling, adhesion, phagocytosis, intracellular killing impaired'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO2: List the common causes of pneumonia in diabetics.",
+                question: "In addition to cellular defects, patients with diabetes suffer from biochemical alterations in their innate immune pathways. High blood glucose drives the Maillard reaction, which fundamentally alters the structure and function of which of the following specific immune components, resulting in decreased opsonization of pathogens?",
+                options: {
+                    A: "CD8+ T cells",
+                    B: "Complement proteins C3 and C4",
+                    C: "Immunoglobulin E",
+                    D: "Interleukin-10",
+                    E: "Tumor necrosis factor alpha"
+                },
+                correctAnswer: "B",
+                rationale: "Hyperglycemia drives the glycation of complement proteins (specifically C3 and C4 via the Maillard reaction). This altered structure impairs their function, leading to decreased opsonization of pathogens and contributing to the diabetic patient's susceptibility to infections.",
+                source: "Infections in Diabetics Slide Deck PDF, slide 3: 'Defects in innate immunity (complement) | altered structure of C3 or C4 ... hyperglycemia [Maillard Reaction] ... glycated C3 or C4 ... decreased opsonization of pathogens'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO3: List the common and life threatening skin and soft tissue infections in diabetics.",
+                question: "A 50-year-old diabetic patient presents with large, fluid-filled blisters (bullae) on his extremities. A culture of the fluid grows Gram-positive cocci in clusters. The pathogen is Staphylococcus aureus, which produces exfoliative toxins (ETA & ETB). These toxins cause blister formation by directly digesting which of the following cellular adhesion proteins?",
+                options: {
+                    A: "Cadherin",
+                    B: "Collagen type IV",
+                    C: "Desmoglein-1",
+                    D: "Fibronectin",
+                    E: "Integrin"
+                },
+                correctAnswer: "C",
+                rationale: "Bullous impetigo is commonly caused by S. aureus. Approximately 5% of staph strains produce exfoliative toxins (ETA & ETB) that specifically digest desmoglein-1, which decreases the adhesion of keratinocytes and leads to the formation of bullae.",
+                source: "Infections in Diabetics Handout PDF, page 2: 'Skin infections 1. Bullous impetigo: usually S. aureus (5% staph → exfoliative toxins, ETA & ETB → digest desmoglein-1 → ↓ adhesion of keratinocytes → bullae'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO3: List the common and life threatening skin and soft tissue infections in diabetics.",
+                question: "A 60-year-old diabetic man presents with a deep, extensive, coalescent inflammatory mass on the posterior aspect of his neck. The mass extends into the subcutaneous fat and represents multiple connecting abscesses. What is the correct clinical term for this specific, severe skin infection?",
+                options: {
+                    A: "Carbuncle",
+                    B: "Erythrasma",
+                    C: "Folliculitis",
+                    D: "Furuncle",
+                    E: "Tinea corporis"
+                },
+                correctAnswer: "A",
+                rationale: "A furuncle is a deep inflammatory nodule (boil). A carbuncle is a more extensive, coalescent group of furuncles that extend into the subcutaneous fat, forming multiple connecting abscesses, commonly seen on the posterior neck of diabetics.",
+                source: "Infections in Diabetics Handout PDF, page 2: 'Furuncles (boils) (deep inflammatory nodules which develop from folliculitis) & carbuncles (more extensive, coalescent furuncles → subcutaneous fat → multiple, connecting abscesses (esp posterior neck).'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO4: Summarize the general principles of management of skin & soft tissue infections in diabetics.",
+                question: "A 55-year-old diabetic woman is admitted to the hospital with a severe, limb-threatening foot infection. The wound is malodorous and deep. Empirical antibiotic therapy must be initiated immediately after tissue cultures are obtained. Given the high likelihood of a polymicrobial infection involving aerobes, anaerobes, and MRSA, which of the following intravenous regimens is most appropriate?",
+                options: {
+                    A: "Amoxicillin/clavulanate (oral)",
+                    B: "Cephalexin monotherapy",
+                    C: "Dicloxacillin alone",
+                    D: "Piperacillin/tazobactam plus vancomycin",
+                    E: "Topical clindamycin"
+                },
+                correctAnswer: "D",
+                rationale: "For severe, life- or limb-threatening infections in diabetics, broad-spectrum empirical coverage is required for Gram-positive, Gram-negative, and anaerobic organisms, plus MRSA. The recommended regimen includes piperacillin/tazobactam (or ertapenem/carbapenem) combined with vancomycin. (Options A, B, C, E are for mild/uncomplicated infections or lack broad/MRSA coverage).",
+                source: "Infections in Diabetics Slide Deck PDF, slide 32: 'Mixed infections--empirical Rx | life/limb threatening infections ... pip/tazo or ertapenem +/- vancomycin → amox/clav'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO4: Summarize the general principles of management of skin & soft tissue infections in diabetics.",
+                question: "A 68-year-old diabetic man is diagnosed with emphysematous cholecystitis after an abdominal CT shows gas in the gallbladder wall. The mortality rate for this condition is significantly higher than standard cholecystitis. Which of the following represents the most appropriate, immediate management strategy for this patient?",
+                options: {
+                    A: "Administration of oral terbinafine",
+                    B: "Broad-spectrum antibiotics and observation for 48 hours",
+                    C: "Percutaneous drainage of the gallbladder only",
+                    D: "Topical smart hydrogel dressings over the abdomen",
+                    E: "Urgent cholecystectomy combined with broad-spectrum antibiotics like a carbapenem"
+                },
+                correctAnswer: "E",
+                rationale: "Emphysematous cholecystitis is a surgical emergency with a high mortality rate due to gallbladder wall gangrene and perforation. The required treatment is an urgent cholecystectomy accompanied by strong IV antibiotics (e.g., piperacillin/tazobactam, fluoroquinolone + metronidazole, or a carbapenem).",
+                source: "Infections in Diabetics Handout PDF, page 4: 'Gastrointestinal Infections: Emphysematous cholecystitis... 6. Rx: urgent cholecystectomy + piperacillin/tazobactam, fluoroquinolone + metronidazole, carbapenem'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO5: Summarize the pathogenesis and management of diabetic foot infections.",
+                question: "A 60-year-old man with a 15-year history of poorly controlled diabetes presents to the clinic. Examination of his feet reveals a large, painless, shallow ulcer located precisely beneath the first metatarsal head. He was completely unaware the ulcer existed. Which of the following pathophysiological mechanisms is most directly responsible for the specific location and the lack of pain associated with this ulcer?",
+                options: {
+                    A: "Emphysematous invasion by gas-producing bacteria",
+                    B: "Hyperglycemia-induced selective destruction of motor neurons only",
+                    C: "Peripheral polyneuropathy leading to anesthetic callus buildup from weight-bearing",
+                    D: "Primary overgrowth of dermatophytes on the plantar surface",
+                    E: "Severe macrovascular arterial occlusion causing immediate gangrene"
+                },
+                correctAnswer: "C",
+                rationale: "Diabetic foot ulcers commonly arise due to peripheral polyneuropathy. The loss of sensation (anesthesia) coupled with mechanical forces (weight-bearing) leads to unrecognized callus buildup, typically at pressure points like the 1st metatarsal head. These calluses crack and form painless ulcers.",
+                source: "Infections in Diabetics Handout PDF, page 3: 'Pathogenesis: foot ulcers due to peripheral polyneuropathy. 1. Glycosylated peripheral nerve proteins... → anesthetic callous buildup (esp @ 1st metatarsal head on sole of foot).'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO5: Summarize the pathogenesis and management of diabetic foot infections.",
+                question: "A diabetic patient has a shallow, non-infected plantar foot ulcer. To promote healing, the primary goal of physical management is to off-load pressure from the ulcerated area and redistribute it to the rest of the foot. Which of the following interventions is considered the \"gold standard\" mechanical management to achieve this goal?",
+                options: {
+                    A: "Application of topical terbinafine",
+                    B: "Daily warm water soaks",
+                    C: "Instant total contact cast",
+                    D: "Negative pressure wound therapy",
+                    E: "Radical amputation below the knee"
+                },
+                correctAnswer: "C",
+                rationale: "For shallow foot ulcers, management requires decreasing weight-bearing until healing. The standard mechanical intervention to off-load and redistribute pressure is a total contact cast or an instant total contact cast (a walker cast made semi-permanent).",
+                source: "Infections in Diabetics Handout PDF, page 3: 'Management: ↓ weight-bearing until healing or total contact cast or instant total contact cast (walker cast made semi-permanent with cast cloth) → off-loads pressure on ulcer and re-distribute it to the rest of the foot.'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO6: Describe the unique aspects of urinary tract infections in diabetics.",
+                question: "A 70-year-old diabetic woman presents with fever, chills, severe flank pain, and nausea. An abdominal CT scan reveals gas within the parenchyma of the right kidney. She is diagnosed with emphysematous pyelonephritis. Which of the following organism profiles is the most common cause of this specific, life-threatening condition in diabetics?",
+                options: {
+                    A: "Candida albicans",
+                    B: "Gas-producing Enterobacteriaceae",
+                    C: "Pseudomonas aeruginosa",
+                    D: "Streptococcus agalactiae",
+                    E: "Trichophyton rubrum"
+                },
+                correctAnswer: "B",
+                rationale: "Emphysematous pyelonephritis (and cystitis) is a severe complication in diabetics characterized by gas in the kidney (or bladder wall). It is caused by gas-producing Enterobacteriaceae fermenting the high levels of glucose present in the urine (glycosuria).",
+                source: "Infections in Diabetics Handout PDF, page 4: 'Emphysematous pyelonephritis 1. Microbiology: gas-producing Enterobacteriaceae in presence of glycosuria'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO6: Describe the unique aspects of urinary tract infections in diabetics.",
+                question: "A 65-year-old diabetic man who recently completed a prolonged course of broad-spectrum antibiotics for a foot infection develops urinary urgency and frequency. A urine culture reveals >10^5 colonies of Candida albicans. He currently has an indwelling Foley catheter. What is the most appropriate initial step in the management of this patient's candiduria?",
+                options: {
+                    A: "Immediate bilateral nephrectomy",
+                    B: "Intravenous administration of amphotericin B",
+                    C: "Modification of predisposing factors (e.g., remove/change catheter, stop antibiotics)",
+                    D: "Oral administration of terbinafine",
+                    E: "Urology consult for urgent surgical bladder drainage"
+                },
+                correctAnswer: "C",
+                rationale: "Candiduria in a catheterized patient on antibiotics often simply reflects colonization. The first step in management is to modify predisposing factors by stopping the broad-spectrum antibiotics and removing or changing the urinary catheter, which is often successful on its own.",
+                source: "Infections in Diabetics Handout PDF, page 5: 'Candida UTI ... 2. Caution--candiduria may simply reflect bladder colonization in catheterized person ... 4. Rx: modify predisposing factors (eg Abx, remove or change catheters, repeat urinalysis cultures (often successful) → fluconazole'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO7: List two of the most common invasive fungal infections in diabetics and outline the principles of management.",
+                question: "A 55-year-old diabetic man is admitted with diabetic ketoacidosis (DKA). He complains of severe right-sided facial pain, periorbital swelling, and blurry vision. Physical examination reveals a black, necrotic eschar on his hard palate and nasal mucosa. A biopsy demonstrates aseptate, broad, ribbon-like hyphae. Which of the following is the required management for this highly lethal infection?",
+                options: {
+                    A: "Fluconazole monotherapy",
+                    B: "Oral terbinafine for 6 months",
+                    C: "Repeated local wound washing with chlorhexidine",
+                    D: "Topical clotrimazole cream",
+                    E: "Urgent surgical debridement of all necrotic tissue combined with Liposomal Amphotericin B"
+                },
+                correctAnswer: "E",
+                rationale: "The patient has rhinocerebral mucormycosis (caused by Rhizopus, Mucor, etc.), which thrives in DKA. The hallmark is a black necrotic eschar. It is highly invasive and lethal. Treatment demands emergency surgical debridement to remove all involved dead tissue, combined with systemic antifungal therapy like Liposomal Amphotericin B (L-AmB) or isavuconazole.",
+                source: "Infections in Diabetics Handout PDF, pages 6-7: 'Rhinocerebral mucormycosis ... 8. Management: emergency surgery to remove all involved tissue → L-AmB + posaconazole'"
+            },
+            {
+                section: "Infections in the Diabetic Patient",
+                fullLO: "LO7: List two of the most common invasive fungal infections in diabetics and outline the principles of management.",
+                question: "A 72-year-old diabetic woman with severe otalgia and purulent otorrhea is diagnosed with invasive (malignant) otitis externa. Although this is a bacterial infection (typically Pseudomonas), her prolonged hospital course and immunosuppression put her at risk for deeply invasive fungal infections. If she were to subsequently develop disseminated candidiasis (invasive yeast in the bloodstream), which of the following is the recommended empirical pharmacotherapy?",
+                options: {
+                    A: "Amoxicillin/clavulanate",
+                    B: "Ceftaroline",
+                    C: "Micafungin",
+                    D: "Penicillin G",
+                    E: "Terbinafine"
+                },
+                correctAnswer: "C",
+                rationale: "Disseminated candidiasis is a severe, systemic fungal infection. The empirical treatment of choice listed for disseminated candidiasis in diabetics is an echinocandin, specifically micafungin.",
+                source: "Infections in Diabetics Handout PDF, page 5: 'Candida UTI ... 5. Disseminated candidiasis: micafungin (empiric Rx)'"
+            },
+
+            // --- Section 4: Insulin and Oral Hypoglycemics: Clinical Applications ---
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO1: Explain clinically relevant aspects of insulin structure, release and mechanism of action.",
+                question: "A 30-year-old man is brought to the emergency department with profound hypoglycemia. His roommate suspects he may have purposefully injected himself with a large dose of synthetic regular insulin. To determine whether the high circulating insulin in the patient's blood is from an exogenous injection or from an endogenous insulinoma (pancreatic tumor), the physician orders a specific laboratory test. Which of the following peptides should be measured to definitively make this distinction?",
+                options: {
+                    A: "Amylin",
+                    B: "C-peptide",
+                    C: "Glucagon",
+                    D: "Preproinsulin",
+                    E: "Somatostatin"
+                },
+                correctAnswer: "B",
+                rationale: "During the synthesis of endogenous insulin, proinsulin is cleaved into mature insulin and C-peptide, which are co-secreted in equimolar amounts. Synthetic (exogenous) insulin does not contain C-peptide. Therefore, measuring C-peptide distinguishes endogenous insulin production (high C-peptide) from exogenous insulin abuse (low C-peptide despite high insulin).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 3: 'Clinical Significance: C-peptide has no major glucose-lowering action but is measured clinically as a marker of endogenous insulin production. It helps distinguish... exogenous insulin abuse (low C-peptide despite high insulin).'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO1: Explain clinically relevant aspects of insulin structure, release and mechanism of action.",
+                question: "A 22-year-old woman with type 1 diabetes injects her morning insulin. The insulin circulates and binds to its receptors on skeletal muscle and adipose tissue. This receptor is a tyrosine kinase. Upon insulin binding, autophosphorylation occurs, triggering a cascade that directly results in glucose rushing into the cells. Which of the following best describes the terminal cellular mechanism that allows this rapid glucose influx?",
+                options: {
+                    A: "Closing of ATP-sensitive potassium channels",
+                    B: "Exocytosis and translocation of GLUT-4 transporters to the plasma membrane",
+                    C: "Opening of voltage-gated calcium channels",
+                    D: "Phosphorylation of glucokinase",
+                    E: "Secretion of incretins from the cell surface"
+                },
+                correctAnswer: "B",
+                rationale: "Insulin binding triggers the PI3K pathway. In skeletal muscle and adipose tissue, this pathway induces the exocytosis and translocation of GLUT-4 transporters from intracellular vesicles to the plasma membrane, driving glucose uptake into the cell.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 5: 'Glucose Translocation: In skeletal muscle and adipose tissue, the PI3K pathway induces the exocytosis and translocation of GLUT-4 transporters to the plasma membrane, driving glucose into the cell.'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO2: Explain basal and prandial insulin needs.",
+                question: "A newly diagnosed type 1 diabetic is placed on a multiple daily injection regimen. She is prescribed a once-daily injection of long-acting insulin glargine to meet her \"basal\" insulin needs, and rapid-acting lispro before meals. The primary physiological purpose of the basal insulin is to mimic the body's continuous background pancreatic output. What is the specific metabolic goal of this basal insulin during fasting states?",
+                options: {
+                    A: "To completely halt lipid storage in adipose tissue",
+                    B: "To process a heavy carbohydrate load rapidly",
+                    C: "To promote active glycogenolysis in skeletal muscle",
+                    D: "To stimulate the secretion of glucagon from alpha cells",
+                    E: "To suppress hepatic glucose production"
+                },
+                correctAnswer: "E",
+                rationale: "Basal insulin mimics the continuous background insulin output. Its primary function during fasting states (between meals and overnight) is to regulate fasting glucose levels by suppressing hepatic glucose production (preventing the liver from dumping excessive glucose into the blood).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 6: 'Basal and prandial insulin mimic the body's natural pancreatic output: basal is the continuous background insulin that regulates fasting glucose by suppressing hepatic glucose production'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO2: Explain basal and prandial insulin needs.",
+                question: "To accurately mimic the natural physiological spike of insulin that occurs immediately after eating a large meal, a patient uses a \"prandial\" insulin. Which of the following specific insulin formulations possesses the rapid onset and short duration required to effectively prevent post-meal hyperglycemia?",
+                options: {
+                    A: "Degludec",
+                    B: "Glargine",
+                    C: "Lispro",
+                    D: "NPH",
+                    E: "Regular (Humulin-R) given 6 hours prior"
+                },
+                correctAnswer: "C",
+                rationale: "Prandial (mealtime) insulin needs a rapid onset to process the carbohydrate load. Rapid-acting insulins include Lispro, Aspart, and Glulisine. (Glargine and Degludec are long/very long-acting basal insulins. NPH is intermediate).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slides 6 & 7: 'Drug Class/Name... Rapid: Lispro, Aspart, Glulisine' AND 'prandial (mealtime) is the rapid spike of insulin released to process carbohydrates and prevent post-meal hyperglycemia'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO3: Recognize the names, mechanisms, side effects and uses of FDA-approved antidiabetic medications.",
+                question: "A 55-year-old man with type 2 diabetes is started on metformin. He asks his physician how the medication works. The physician explains that the drug reduces glucose production in the liver. At the cellular level, metformin accomplishes this primarily by:",
+                options: {
+                    A: "Activating the DPP-4 enzyme",
+                    B: "Binding to the PPAR-gamma nuclear transcription regulator",
+                    C: "Blocking the reabsorption of glucose in the proximal tubule",
+                    D: "Closing ATP-dependent potassium channels in beta cells",
+                    E: "Inhibiting mitochondrial respiratory-chain complex 1, increasing AMP, and activating AMPK"
+                },
+                correctAnswer: "E",
+                rationale: "Metformin's mechanism of action involves reducing hepatic glucose production by specifically inhibiting mitochondrial respiratory-chain complex 1. This reduces ATP levels and increases AMP, which then activates AMPK (AMP-activated protein kinase).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 39: 'Metformin MOA • Metformin reduces glucose production in the liver, specifically inhibiting mitochondrial respiratory-chain complex 1 (reducing ATP levels, increasing AMP) • Increased AMP activates AMPK'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO3: Recognize the names, mechanisms, side effects and uses of FDA-approved antidiabetic medications.",
+                question: "A 60-year-old woman is prescribed empagliflozin for the management of her type 2 diabetes. While taking this medication, she is counseled on potential adverse effects resulting directly from the drug's mechanism of action in the kidney. Which of the following is a common adverse effect specifically associated with this drug class?",
+                options: {
+                    A: "Congestive heart failure",
+                    B: "Lactic acidosis",
+                    C: "Severe, life-threatening hypoglycemia",
+                    D: "Thyroid C-cell tumors",
+                    E: "Urinary tract infections and vaginal yeast infections"
+                },
+                correctAnswer: "E",
+                rationale: "Empagliflozin is an SGLT2 inhibitor. It blocks the reabsorption of glucose in the proximal convoluted tubule, resulting in glucosuria (sugar in the urine). The high glucose content in the urogenital tract significantly increases the risk of UTIs and vaginal yeast infections.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 9: 'Sodium-glucose co-transporter 2 (SGLT2) Inhibitors ... Empagliflozin ... Adverse Effects • >10%: Glucosuria • >5%: UTIs, vaginal yeast infections'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO3: Recognize the names, mechanisms, side effects and uses of FDA-approved antidiabetic medications.",
+                question: "A 58-year-old obese man with type 2 diabetes asks about starting an injectable medication that promotes weight loss and improves glycemic control. His physician considers prescribing liraglutide, a GLP-1 analog. Before prescribing this medication, the physician must take a thorough family history because this specific drug class carries an FDA black box warning for which of the following malignancies?",
+                options: {
+                    A: "Bladder cancer",
+                    B: "Hepatocellular carcinoma",
+                    C: "Pancreatic adenocarcinoma",
+                    D: "Renal cell carcinoma",
+                    E: "Thyroid C-cell tumors"
+                },
+                correctAnswer: "E",
+                rationale: "Glucagon-like peptide-1 (GLP-1) analogs, such as liraglutide, exenatide, and semaglutide, carry an FDA Black Box Warning regarding the risk of thyroid C-cell tumors (medullary thyroid carcinoma). A personal or family history of these tumors is a strict contraindication.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 9: 'Glucagon-like peptide-1 (GLP-1) analogs... Clinical Pearls: FDA Black Box Warning: Risk of thyroid C-cell tumors'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO3: Recognize the names, mechanisms, side effects and uses of FDA-approved antidiabetic medications.",
+                question: "A 62-year-old man with type 2 diabetes is started on pioglitazone. Over the next several months, his peripheral insulin sensitivity significantly improves. At the cellular level, this medication exerts its therapeutic effect by directly binding to and activating which of the following?",
+                options: {
+                    A: "ATP-dependent potassium channels",
+                    B: "Dipeptidyl peptidase-4 (DPP-4) enzymes",
+                    C: "Glucagon-like peptide-1 (GLP-1) receptors",
+                    D: "Intestinal brush-border alpha-glucosidases",
+                    E: "PPAR-gamma nuclear transcription regulators"
+                },
+                correctAnswer: "E",
+                rationale: "Pioglitazone belongs to the thiazolidinedione (TZD) class of antidiabetic drugs. Its mechanism of action involves binding to and activating the PPAR-gamma nuclear transcription regulator, which leads to increased insulin sensitivity and elevated levels of adiponectin.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 10: 'Thiazolidinediones Pioglitazone... Mechanism of Action: Binds to PPAR-gamma nuclear transcription regulator, leading to ↑ insulin sensitivity'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO3: Recognize the names, mechanisms, side effects and uses of FDA-approved antidiabetic medications.",
+                question: "A 60-year-old woman with type 2 diabetes is prescribed sitagliptin. This drug helps regulate her postprandial glucose levels without causing significant weight gain. It works by inhibiting an enzyme that normally degrades endogenous incretin hormones. The targeted enzyme normally deactivates which of the following molecules?",
+                options: {
+                    A: "AMP-activated protein kinase (AMPK)",
+                    B: "Glucagon-like peptide-1 (GLP-1)",
+                    C: "Glucose transporter type 4 (GLUT-4)",
+                    D: "Glycogen phosphorylase",
+                    E: "Hormone-sensitive lipase"
+                },
+                correctAnswer: "B",
+                rationale: "Sitagliptin is a Dipeptidyl peptidase-4 (DPP-4) inhibitor. It works by inhibiting the DPP-4 enzyme, which is normally responsible for the rapid degradation and deactivation of the incretin hormone GLP-1.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 9: 'Dipeptidyl peptidase (DPP)-4 Inhibitors Sitagliptin... Mechanism of Action: Inhibits the DPP-4 enzyme that deactivates GLP-1'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO4: Explain the role of hyperglycemia in diabetic pathology and how to treat it.",
+                question: "A 56-year-old man with type 2 diabetes visits the clinic. His fasting blood glucose is 183 mg/dL, and his HbA1c is 8.0%. He has been on metformin for 6 years, but it is no longer maintaining his glycemic control. According to standard clinical management pathways, which of the following is an appropriate pharmacological action to directly lower his hyperglycemia?",
+                options: {
+                    A: "Add an SGLT2 inhibitor like empagliflozin",
+                    B: "Add lovastatin",
+                    C: "Discontinue metformin and observe",
+                    D: "Immediately perform a radical foot amputation",
+                    E: "Replace metformin with glucagon"
+                },
+                correctAnswer: "A",
+                rationale: "If A1C is above goal on metformin monotherapy, the standard treatment algorithm involves adding a second agent with proven benefit to lower blood glucose, such as an SGLT2 inhibitor (empagliflozin) or a GLP-1 RA, rather than substituting or dropping metformin. (Lovastatin treats cholesterol, not hyperglycemia directly).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 35: 'A 56-year-old man was found to have the following serum values... HbA1c 8%... disease was well controlled with diet and metformin until the most recent visit... Which of the following would be the most appropriate next step... a) Add empagliflozin (Jardiance)'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO4: Explain the role of hyperglycemia in diabetic pathology and how to treat it.",
+                question: "A 17-year-old girl is brought to the emergency department after a motor vehicle accident. Routine labs reveal a blood glucose of 590 mg/dL, positive serum ketones, and a blood pH of 7.24 with an anion gap of 24 mmol/L. She is diagnosed with Diabetic Ketoacidosis (DKA). To correct the severe hyperglycemia and shut down the ketogenesis, which of the following is the absolute required immediate pharmacotherapy?",
+                options: {
+                    A: "Intramuscular glucagon",
+                    B: "Intravenous bicarbonate infusion",
+                    C: "Intravenous regular insulin",
+                    D: "Oral glipizide",
+                    E: "Oral metformin"
+                },
+                correctAnswer: "C",
+                rationale: "DKA is a life-threatening state of hyperglycemia and acidosis due to profound insulin deficiency. The primary treatment to reverse the pathology is continuous intravenous (IV) regular insulin, alongside IV fluids (and careful potassium management).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slides 17 & 20: 'Which of the following correctly pairs the most likely patient disorder with the appropriate emergency treatment? ... b) Diabetic ketoacidosis/IV regular insulin' AND 'DKA - Treatment | Insulin • Immediately after the diagnosis is established'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO5: Explain the significance of hypoglycemia and how it is treated.",
+                question: "A 13-year-old boy with type 1 diabetes is found unconscious in his bedroom. His heart rate is 120 bpm, and he is exhibiting tetanic muscle contractions. His mother states he accidentally took a massive overdose of his morning lispro and glargine insulin. His blood glucose is critically low. Because he is unconscious and lacks IV access in the home setting, which of the following is the most appropriate immediate emergency treatment to raise his blood sugar?",
+                options: {
+                    A: "Intramuscular epinephrine",
+                    B: "Intramuscular glucagon",
+                    C: "Intravenous regular insulin",
+                    D: "Oral glucose tablets",
+                    E: "Oral metformin"
+                },
+                correctAnswer: "B",
+                rationale: "Severe hypoglycemia causing unconsciousness requires immediate reversal. Because the patient cannot safely swallow oral glucose (choking hazard), and IV access isn't available for IV dextrose, intramuscular (IM) glucagon is the standard emergency rescue treatment.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 46: 'A 13-year-old boy with type 1 diabetes received his morning injection... found unconscious... Which of the following would be the immediate appropriate treatment for this patient? ... b) Glucagon IM'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO5: Explain the significance of hypoglycemia and how it is treated.",
+                question: "A 65-year-old man takes a sulfonylurea (glyburide) for his type 2 diabetes. He skipped breakfast but took his medication. He suddenly feels dizzy, sweaty, and confused. The paramedics arrive and determine his blood glucose is 45 mg/dL. The severe hypoglycemia he is experiencing is a direct mechanism of the drug doing which of the following in the pancreatic beta cell?",
+                options: {
+                    A: "Activating the AMP-kinase pathway",
+                    B: "Blocking the reabsorption of glucose",
+                    C: "Closing the ATP-dependent K+ channel, leading to continuous insulin release",
+                    D: "Inhibiting the DPP-4 enzyme",
+                    E: "Stimulating glucagon secretion"
+                },
+                correctAnswer: "C",
+                rationale: "Sulfonylureas (like glyburide, glipizide) work by closing the ATP-dependent K+ channel on the beta-cell membrane. This depolarizes the cell, causing an influx of calcium and subsequent exocytosis of insulin. Because this forces insulin release regardless of ambient blood glucose levels, it carries a high risk of severe hypoglycemia if the patient skips a meal.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 10: 'Sulfonylureas Glimepiride Glipizide Glyburide | Closes ATP-dependent K+ channel in pancreatic ß cell membrane → cell depolarizes → insulin release via ↑Ca2+ influx ... Adverse Effects: Serious: Hypoglycemia'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO6: Explain what causes ketoacidosis in type 1 diabetes and how it is controlled therapeutically.",
+                question: "A 20-year-old woman with known type 1 diabetes is admitted with Diabetic Ketoacidosis (DKA). She reports that she has been battling a severe urinary tract infection for the past three days. According to the \"8 I's\" that precipitate DKA, which of the following represents the specific physiological trigger that pushed her into this crisis?",
+                options: {
+                    A: "Iatrogenic glucocorticoids",
+                    B: "Infarction",
+                    C: "Infection",
+                    D: "Initial presentation",
+                    E: "Intoxication"
+                },
+                correctAnswer: "C",
+                rationale: "DKA is often precipitated by significant physiological stress that increases counter-regulatory hormones (cortisol, epinephrine, glucagon), which overpower the available insulin. The \"8 I's\" of DKA precipitation include Infection, Ischemia/Infarction, Iatrogenic, Intoxication, Insulin missed, Initial presentation, Intra-abdominal process, and Intraoperative stress. The patient's severe UTI represents \"Infection\".",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 19: 'The 8 “I’s” Precipitating DKA • Infection • Ischemia/Infarction • Iatrogenic (glucocorticoids) • Intoxication • Insulin missed...'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO6: Explain what causes ketoacidosis in type 1 diabetes and how it is controlled therapeutically.",
+                question: "A patient in severe DKA is ordered to receive continuous intravenous regular insulin. However, before the nurse initiates the insulin drip, the physician urgently orders a stat metabolic panel. According to standard DKA treatment protocols, the physician must confirm that the patient is NOT deficient in which of the following specific electrolytes before giving insulin?",
+                options: {
+                    A: "Calcium",
+                    B: "Chloride",
+                    C: "Magnesium",
+                    D: "Potassium",
+                    E: "Sodium"
+                },
+                correctAnswer: "D",
+                rationale: "Insulin actively drives potassium from the extracellular fluid into the intracellular space. Patients in DKA are often total-body potassium depleted despite normal or high serum levels. Giving insulin can cause a precipitous and fatal drop in serum potassium (hypokalemia). Therefore, it is critical to ensure the patient is not hypokalemic before starting insulin.",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 20: 'DKA - Treatment | Insulin • Immediately after the diagnosis is established • Be certain that the patient is not hypokalemic before giving insulin'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO7: Given a clinical vignette, indicate the most appropriate therapy or side effect associated with particular antidiabetic medications.",
+                question: "A 24-year-old woman in her 26th week of pregnancy is diagnosed with gestational diabetes mellitus. Dietary management has failed to control her blood glucose levels. To tightly control her blood sugar while ensuring the safety of the fetus, the American College of Obstetricians and Gynecologists (ACOG) strongly recommends which of the following as the preferred first-line pharmacotherapy?",
+                options: {
+                    A: "Empagliflozin",
+                    B: "Glipizide",
+                    C: "Glyburide",
+                    D: "Insulin",
+                    E: "Pioglitazone"
+                },
+                correctAnswer: "D",
+                rationale: "For gestational diabetes that fails dietary management, ACOG recommends insulin as the preferred therapy because it does not cross the placenta and provides excellent glycemic control. (Glyburide is explicitly noted to have worse outcomes, and oral agents like metformin cross the placenta with unknown long-term offspring effects).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slide 24: 'Pharmacologic Treatment • ACOG recommends that insulin be the preferred therapy if glycemic control is not obtained with nonpharmacological treatment'"
+            },
+            {
+                section: "Insulin and Oral Hypoglycemics: Clinical Applications",
+                fullLO: "LO7: Given a clinical vignette, indicate the most appropriate therapy or side effect associated with particular antidiabetic medications.",
+                question: "A 52-year-old woman is diagnosed with type 2 diabetes mellitus. Her physician prescribes a first-line oral medication. Four weeks later, follow-up tests reveal her hepatic glucose output is significantly decreased, and her peripheral tissue insulin sensitivity is increased. She complains of mild gastrointestinal upset. She does not experience any hypoglycemia. Which of the following drugs was most likely prescribed?",
+                options: {
+                    A: "Acarbose",
+                    B: "Glipizide",
+                    C: "Glyburide",
+                    D: "Metformin",
+                    E: "Repaglinide"
+                },
+                correctAnswer: "D",
+                rationale: "Metformin is the first-line therapy for type 2 diabetes. Its primary mechanism of action is inhibiting hepatic gluconeogenesis (decreasing hepatic glucose output) and increasing peripheral insulin sensitivity. It causes GI upset (>10%) but does NOT cause hypoglycemia (unlike sulfonylureas like glipizide/glyburide).",
+                source: "Insulin and Oral Hypoglycemics: Clinical Applications PDF, slides 9 & 49: 'STEP 1 sample question: A 52-year-old woman begins pharmacotherapy... hepatic glucose output is decreased, and target tissue glucose uptake and utilization are increased... c) Metformin (Glucophage)' AND 'Metformin | Inhibits hepatic gluconeogenesis... increases peripheral glucose uptake... Hypoglycemia: No'"
+            }
+        ];
+
+        // --- Core Logic ---
+        const quizRoot = document.getElementById('quiz-root');
+        const themeSelect = document.getElementById('theme-select');
+        const pinBtn = document.getElementById('pin-btn');
+        const mainHeader = document.getElementById('main-header');
+        const sectionNav = document.getElementById('section-nav');
+        const customBuilder = document.getElementById('custom-builder');
+        const rootElements = document.documentElement;
+
+        let isRevealed = false;
+
+        function toggleAllLOs() {
+            isRevealed = !isRevealed;
+            const btn = document.getElementById('reveal-all-btn');
+            btn.textContent = isRevealed ? "Hide Learning Objectives" : "Show Learning Objectives";
+            
+            document.querySelectorAll('.lo-box').forEach(box => {
+                box.style.display = isRevealed ? 'block' : 'none';
+            });
+        }
+
+        function initQuiz() {
+            let currentSection = "";
+            let sectionIndex = 0;
+            
+            quizData.forEach((item, index) => {
+                if (item.section !== currentSection) {
+                    currentSection = item.section;
+                    
+                    const sectionId = 'sec-' + sectionIndex;
+                    
+                    const sectionHeader = document.createElement('h2');
+                    sectionHeader.className = 'section-header';
+                    sectionHeader.id = sectionId;
+                    sectionHeader.textContent = currentSection;
+                    quizRoot.appendChild(sectionHeader);
+
+                    const navBtn = document.createElement('button');
+                    let btnText = currentSection;
+                    if (btnText.includes("Diabetes-Induced Dysregulation of Lipid Metabolism")) btnText = "Lipid Metabolism";
+                    if (btnText.includes("Pathology of Diabetes")) btnText = "Pathology of Diabetes";
+                    if (btnText.includes("Infections in the Diabetic Patient")) btnText = "Infections in Diabetics";
+                    if (btnText.includes("Insulin and Oral Hypoglycemics: Clinical Applications")) btnText = "Insulin & Hypoglycemics";
+                    
+                    navBtn.textContent = btnText;
+                    navBtn.onclick = () => {
+                        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
+                    };
+                    sectionNav.appendChild(navBtn);
+
+                    sectionIndex++;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                card.id = `q-card-${index}`;
+
+                const loBox = document.createElement('div');
+                loBox.className = 'lo-box';
+                loBox.id = `lo-${index}`;
+                loBox.innerHTML = item.fullLO;
+                card.appendChild(loBox);
+
+                const qText = document.createElement('div');
+                qText.className = 'question-text';
+                qText.innerHTML = `${index + 1}. ${item.question}`;
+                card.appendChild(qText);
+
+                const optionsGrid = document.createElement('div');
+                optionsGrid.className = 'options-grid';
+
+                for (const[key, value] of Object.entries(item.options)) {
+                    const label = document.createElement('label');
+                    label.className = 'option-label';
+                    
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `question-${index}`;
+                    input.value = key;
+
+                    const span = document.createElement('span');
+                    span.innerHTML = `${key}. ${value}`;
+
+                    label.appendChild(input);
+                    label.appendChild(span);
+                    optionsGrid.appendChild(label);
+                }
+                card.appendChild(optionsGrid);
+
+                const btn = document.createElement('button');
+                btn.className = 'btn-check';
+                btn.textContent = 'Check Answer';
+                btn.onclick = () => checkAnswer(index);
+                card.appendChild(btn);
+
+                const feedback = document.createElement('div');
+                feedback.className = 'feedback';
+                feedback.id = `feedback-${index}`;
+                card.appendChild(feedback);
+
+                quizRoot.appendChild(card);
+            });
+
+            const returnContainer = document.createElement('div');
+            returnContainer.style.textAlign = 'center';
+            returnContainer.style.marginTop = '2rem';
+            
+            const returnBtn = document.createElement('a');
+            returnBtn.href = 'https://ibecerramcg.github.io/GI-GU-ENDO-Practice-Quizzes/';
+            returnBtn.className = 'btn-link';
+            returnBtn.textContent = '← Return to Quiz Directory';
+            
+            returnContainer.appendChild(returnBtn);
+            quizRoot.appendChild(returnContainer);
+
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            themeSelect.value = savedTheme;
+            changeTheme(savedTheme);
+
+            const savedPinState = localStorage.getItem('headerPinned');
+            toggleHeader(savedPinState !== 'false');
+        }
+
+        function checkAnswer(index) {
+            const selected = document.querySelector(`input[name="question-${index}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const data = quizData[index];
+
+            if (!selected) {
+                alert("Please select an answer.");
+                return;
+            }
+
+            const isCorrect = selected.value === data.correctAnswer;
+            
+            let html = `<span class="feedback-header">${isCorrect ? "Correct!" : "Incorrect"}</span>`;
+            if (!isCorrect) {
+                html += `<div>The correct answer is <strong>${data.correctAnswer}</strong>.</div>`;
+            }
+            
+            html += `<div class="rationale"><strong>Rationale:</strong> ${data.rationale}</div>`;
+            html += `<div class="source"><strong>Source:</strong> ${data.source}</div>`;
+
+            feedbackEl.innerHTML = html;
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+        }
+
+        function changeTheme(themeName) {
+            localStorage.setItem('quizTheme', themeName);
+            
+            if (themeName === 'custom') {
+                rootElements.removeAttribute('data-theme');
+                customBuilder.classList.add('active');
+                loadCustomTheme();
+            } else {
+                rootElements.setAttribute('data-theme', themeName);
+                customBuilder.classList.remove('active');
+                rootElements.removeAttribute('style');
+            }
+        }
+
+        function updateCustomTheme() {
+            const bg = document.getElementById('color-bg').value;
+            const card = document.getElementById('color-card').value;
+            const text = document.getElementById('color-text').value;
+            const accent = document.getElementById('color-accent').value;
+
+            rootElements.style.setProperty('--bg-body', bg);
+            rootElements.style.setProperty('--bg-header', bg);
+            rootElements.style.setProperty('--bg-card', card);
+            rootElements.style.setProperty('--highlight-bg', card);
+            rootElements.style.setProperty('--text-main', text);
+            rootElements.style.setProperty('--text-accent', accent);
+            rootElements.style.setProperty('--button-bg', accent);
+            rootElements.style.setProperty('--button-text', bg);
+            rootElements.style.setProperty('--border-color', accent + '40');
+
+            const customColors = { bg, card, text, accent };
+            localStorage.setItem('customThemeColors', JSON.stringify(customColors));
+        }
+
+        function loadCustomTheme() {
+            const savedColors = JSON.parse(localStorage.getItem('customThemeColors'));
+            if (savedColors) {
+                document.getElementById('color-bg').value = savedColors.bg;
+                document.getElementById('color-card').value = savedColors.card;
+                document.getElementById('color-text').value = savedColors.text;
+                document.getElementById('color-accent').value = savedColors.accent;
+                updateCustomTheme();
+            } else {
+                updateCustomTheme();
+            }
+        }
+
+        function toggleHeader(forceState) {
+            const isCurrentlyPinned = !mainHeader.classList.contains('unpinned');
+            const newState = (typeof forceState === 'boolean') ? forceState : !isCurrentlyPinned;
+
+            if (newState) {
+                mainHeader.classList.remove('unpinned');
+                pinBtn.classList.add('pin-active');
+                localStorage.setItem('headerPinned', 'true');
+            } else {
+                mainHeader.classList.add('unpinned');
+                pinBtn.classList.remove('pin-active');
+                localStorage.setItem('headerPinned', 'false');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initQuiz);
+
+    </script>
+</body>
+</html>
