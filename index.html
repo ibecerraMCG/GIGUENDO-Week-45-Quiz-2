@@ -1394,7 +1394,7 @@ function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); 
 const sections = [];
 quizData.forEach(q => { if (!sections.includes(q.section)) sections.push(q.section); });
 function shortLabel(name) {
-    const map = {};
+    const map = {"Diabetes-Induced Dysregulation of Lipid Metabolism":"Diabetic Lipid Dysregulation","Infections in the Diabetic Patient":"Diabetic Infections","Insulin and Oral Hypoglycemics: Clinical Applications":"Insulin & Oral Hypoglycemics"};
     return map[name] || name;
 }
 window.__bbShortLabel = shortLabel;
